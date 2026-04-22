@@ -7,7 +7,7 @@ export default function AdminAlertas() {
   const [color, setColor] = useState('rojo');
   const [status, setStatus] = useState('SISTEMA LISTO');
 
-  // EL ARREGLO QUIRÚRGICO ESTÁ AQUÍ (tipo: any)
+  // EL PARCHE QUIRÚRGICO: Se agregó ": any" para que Vercel no se queje
   const ejecutarRobot = async (tipo: any) => {
     setStatus(`🤖 RASTREANDO ${tipo.toUpperCase()}...`);
     try {
@@ -26,11 +26,13 @@ export default function AdminAlertas() {
   const enviarAlerta = async (e: any) => {
     e.preventDefault();
     setStatus('📡 LANZANDO ALERTA...');
-    const { error } = await supabase.from('alertas').insert([{ mensaje, color }]);
-    if (error) setStatus('❌ FALLO AL LANZAR');
-    else {
+    try {
+      const { error } = await supabase.from('alertas').insert([{ mensaje, color }]);
+      if (error) throw error;
       setStatus('🚨 ALERTA EN VIVO');
       setMensaje('');
+    } catch (err: any) {
+      setStatus('❌ FALLO AL LANZAR');
     }
   };
 
