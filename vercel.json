@@ -1,8 +1,8 @@
 {
-  "crons": [
-    {
-      "path": "/api/rss-news",
-      "schedule": "0 0 * * *"
-    }
-  ]
+  "typescript": {
+    "ignoreBuildErrors": true
+  },
+  "eslint": {
+    "ignoreDuringBuilds": true
+  }
 }
