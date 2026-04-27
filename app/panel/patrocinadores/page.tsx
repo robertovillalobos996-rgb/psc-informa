@@ -15,9 +15,16 @@ export default function AdminSponsors() {
     try {
       let finalUrl = '';
       if (archivo) {
-        const nombreFile = `${Date.now()}-${archivo.name}`;
+        // Limpieza de nombre: elimina espacios para evitar el error 400 de Supabase
+        const nombreLimpio = archivo.name.replace(/[^a-zA-Z0-9.]/g, '_');
+        const nombreFile = `${Date.now()}_${nombreLimpio}`;
+        
         const { error: upErr } = await supabase.storage.from('noticias').upload(nombreFile, archivo);
-        if (upErr) throw upErr;
+        if (upErr) {
+          setStatus('❌ ERROR DE ALMACENAMIENTO: ' + upErr.message);
+          return;
+        }
+        
         const { data } = supabase.storage.from('noticias').getPublicUrl(nombreFile);
         finalUrl = data.publicUrl;
       }
@@ -32,12 +39,19 @@ export default function AdminSponsors() {
         fecha_expiracion: fechaExp.toISOString() 
       }]);
       
-      if (error) throw error;
+      if (error) {
+        setStatus('❌ ERROR EN BASE DE DATOS: ' + error.message);
+        return;
+      }
       
-      setStatus('✅ ANUNCIO PUBLICADO');
+      setStatus('✅ ANUNCIO PUBLICADO CON ÉXITO');
       setNombre(''); setArchivo(null);
+      
+      const fileInput = document.getElementById('file_anuncio') as HTMLInputElement;
+      if (fileInput) fileInput.value = '';
+
     } catch (err: any) {
-      setStatus('❌ ERROR: ' + err.message);
+      setStatus('❌ ERROR CRÍTICO: ' + err.message);
     }
   };
 
@@ -59,12 +73,12 @@ export default function AdminSponsors() {
         </div>
 
         <div className="p-6 border-4 border-dashed rounded-2xl bg-slate-50 text-center">
-           <label className="block mb-2 font-black text-[10px] uppercase tracking-widest text-slate-400">Subir Video o Imagen desde PC:</label>
-           <input type="file" onChange={(e: any) => setArchivo(e.target.files[0])} className="w-full text-xs" required />
+           <label className="block mb-2 font-black text-[10px] uppercase tracking-widest text-slate-400">Subir Video o Imagen:</label>
+           <input id="file_anuncio" type="file" onChange={(e: any) => setArchivo(e.target.files[0])} className="w-full text-xs" required />
         </div>
 
         <button className="w-full bg-red-600 text-white py-5 rounded-2xl font-black uppercase shadow-xl hover:bg-black transition-all">PUBLICAR ANUNCIO</button>
-        {status && <p className="text-center font-bold mt-4 animate-pulse text-red-600 text-xs">{status}</p>}
+        {status && <p className="text-center font-bold mt-4 text-xs text-red-600 animate-pulse">{status}</p>}
       </form>
     </div>
   );
