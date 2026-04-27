@@ -29,20 +29,19 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        {/* Radar invisible de Google - No afecta diseño */}
+        {/* Radar puesto al final para que no mueva ni un pelo del diseño original */}
+        {children}
+
         <noscript>
-          <iframe
+          <iframe 
             src="https://www.googletagmanager.com/ns.html?id=GTM-K6T9L8Q9"
-            height="0"
-            width="0"
-            style={{ display: "none", visibility: "hidden" }}
+            height="0" 
+            width="0" 
+            style={{ display: 'none', visibility: 'hidden' }}
           ></iframe>
         </noscript>
 
-        {children}
-
-        {/* Script de Analítica - No afecta diseño */}
-        <Script id="google-tag-manager" strategy="afterInteractive">
+        <Script id="gtm-radar" strategy="afterInteractive">
           {`
             (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
             new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
