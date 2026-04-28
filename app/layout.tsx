@@ -12,9 +12,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// Aquí actualicé el título para tu proyecto
 export const metadata: Metadata = {
   title: "PSC Informa",
-  description: "Noticias y actualizaciones",
+  description: "Plataforma de noticias",
 };
 
 export default function RootLayout({
